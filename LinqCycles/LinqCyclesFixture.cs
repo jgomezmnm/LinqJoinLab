@@ -14,8 +14,8 @@ namespace LinqCycles
 
         public LinqCyclesFixture()
         {
-            _parents = GetParents(Enumerable.Range(0, 100)).ToList();
-            _children = GetChildren(Enumerable.Range(0, 100), 100).ToList();
+            _parents = GetParents(100).ToList();
+            _children = GetChildren(_parents, 100).ToList();
         }
 
         [Fact]
@@ -51,7 +51,7 @@ namespace LinqCycles
             var codes = new List<int>();
             foreach (Parent parent in parents)
             {
-                int parentId = parent.Id;
+                Guid parentId = parent.Id;
                 IEnumerable<Child> ptc = children.Where(x => x.ParentId == parentId);
                 foreach (Child child in ptc)
                 {
@@ -90,26 +90,28 @@ namespace LinqCycles
             _parentLog[key]++;
         }
 
-        public IEnumerable<Child> GetChildren(IEnumerable<int> parentIds, int count)
+        private IEnumerable<Child> GetChildren(IEnumerable<Parent> parents, int count)
         {
-            return parentIds
+            return parents
                 .Select(
                     p => Enumerable.Range(0, count)
                         .Select(c => new Child
                         {
-                            ParentId = p,
+                            Id = Guid.NewGuid(),
+                            ParentId = p.Id,
                             Name = string.Format("Child{0}_Of_Parent{1}", c, p)
                         }))
                 .SelectMany(x => x.ToList());
         }
 
-        public IEnumerable<Parent> GetParents(IEnumerable<int> parentIds)
+        private IEnumerable<Parent> GetParents(int count)
         {
-            return parentIds.Select(c => new Parent
-            {
-                Id = c,
-                Name = string.Format("Parent{0}", c)
-            });
+            return Enumerable.Range(0, count)
+                .Select(c => new Parent
+                {
+                    Id = Guid.NewGuid(),
+                    Name = string.Format("Parent{0}", c)
+                });
         }
     }
 }

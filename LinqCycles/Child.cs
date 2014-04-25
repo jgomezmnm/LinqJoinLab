@@ -1,9 +1,13 @@
-﻿namespace LinqCycles
+﻿using System;
+
+namespace LinqCycles
 {
     public class Child
     {
+        public Guid Id { get; set; }
+
         public string Name { get; set; }
 
-        public int ParentId { get; set; }
+        public Guid ParentId { get; set; }
     }
 }
